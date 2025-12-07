@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <stack>
 
 using namespace std;
 
@@ -125,38 +126,35 @@ bool dfs(int r, int c,
          vector<vector<bool>>& visited,
          vector<vector<int>>& parent_r,
          vector<vector<int>>& parent_c,
-         int exit_r, int exit_c); {
-stack<pair<int,int>> st;
+         int exit_r, int exit_c)
+{
+std::stack<pair<int,int>> st;
 st.push({r, c});
-visited[start_r][start_c] = true;
+visited[r][c] = true;
 while (!st.empty()) {
-int r = st.top().first;
-int c = st.top().second;
-st.pop();
-if (r == end_r && c == end_c) {
-return true;//found end
+    int r = st.top().first;
+    int c = st.top().second;
+    st.pop();
+    if (r == exit_r && c == exit_c) {
+        return true;//found end
+    }
+    for (int k = 0; k < 4; k++)//picks our next location by shared index on directional arrays
+    {
+        int nr = r + dr[k];
+        int nc = c + dc[k];
+        if (nr >= 0 && nr < maze.size() && nc >= 0 && nc < maze[0].size())// checking boundaries
+        {
+            if (visited[nr][nc] == false && maze[nr][nc] == 0) //can we go through this location
+            { st.push({nr, nc});
+                parent_r[nr][nc] = r;
+                parent_c[nr][nc] = c;//these two are for our pathing, they tell us what location we moved from to our new one. they are paired and require 2 variables to reference because of 2d position
+                visited[nr][nc] = true; }
+        }
+    }
 }
-for (int k = 0; k < 4; k++) {//picks our next location by shared index on directional arrays
-int nr = r + dr[k];
-int nc = c + dc[k];
-if (nr >= 0 && nr < N && nc >= 0 && nc < M)// checking boundaries
- { if (visited[nr][nc] == false && maze[nr][nc] == 0) //can we go through this location
-{ st.push({nr, nc});
-parent_r[nr][nc] = r;
-parent_c[nr][nc] = c;//these two are for our pathing, they tell us what location we moved from to our new one. they are paired and require 2 variables to reference because of 2d position
-visited[nr][nc] = true; }
-}
-return false;
 
 
-
-
-
-
-
-
-
-   }
+return false;}
 
 
 // ----------------------------------------------------------
