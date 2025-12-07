@@ -116,10 +116,47 @@ void printPath(pair<int,int> exitcell,
 // ----------------------------------------------------------
 // STUDENTS IMPLEMENT DFS HERE
 // Add arguments, return type, and logic
+/* We need dfs to know what the maze looks like, arguments will include the maze with the start and end coordinates
+In depth first search, we create a stack of where we want to explore next. to add maze positions to this stack we need adjacency and also to know they are not in the stack or already visited.
+Application is accomplished with a while loop that runs while the stack isn't empty*/
 // ----------------------------------------------------------
-// bool dfs(……) {
-//     // Your code here
-// }
+bool dfs(int r, int c,
+         const vector<vector<int>>& maze,
+         vector<vector<bool>>& visited,
+         vector<vector<int>>& parent_r,
+         vector<vector<int>>& parent_c,
+         int exit_r, int exit_c); {
+stack<pair<int,int>> st;
+st.push({r, c});
+visited[start_r][start_c] = true;
+while (!st.empty()) {
+int r = st.top().first;
+int c = st.top().second;
+st.pop();
+if (r == end_r && c == end_c) {
+return true;//found end
+}
+for (int k = 0; k < 4; k++) {//picks our next location by shared index on directional arrays
+int nr = r + dr[k];
+int nc = c + dc[k];
+if (nr >= 0 && nr < N && nc >= 0 && nc < M)// checking boundaries
+ { if (visited[nr][nc] == false && maze[nr][nc] == 0) //can we go through this location
+{ st.push({nr, nc});
+parent_r[nr][nc] = r;
+parent_c[nr][nc] = c;//these two are for our pathing, they tell us what location we moved from to our new one. they are paired and require 2 variables to reference because of 2d position
+visited[nr][nc] = true; }
+}
+return false;
+
+
+
+
+
+
+
+
+
+   }
 
 
 // ----------------------------------------------------------
@@ -159,17 +196,17 @@ int main() {
     // STUDENT WORK:
     // Call your DFS, track visited, and fill parent_r and parent_c
     // ------------------------------------------------------
-    // bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
+    bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
 
     // ------------------------------------------------------
     // STUDENT WORK:
     // If found, print the path
     // ------------------------------------------------------
-    // if (found) {
-    //     printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
-    // } else {
-    //     cout << "\nNo path exists.\n";
-    // }
+    if (found) {
+    printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
+    } else {
+    cout << "\nNo path exists.\n";
+    }
 
     return 0;
 }
